@@ -30,10 +30,24 @@ struct CoinManager {
                 }
                 
                 if let data {
-                    print(String(data: data, encoding: .utf8))
+                    if let rate = parseJson(data) {
+                        print(String(format: "%.02f", rate))
+                    }
                 }
             }
             task.resume()
+        }
+    }
+    
+    func parseJson(_ data: Data) -> Double? {
+        let decoder = JSONDecoder()
+        do {
+            let result = try decoder.decode(CoinData.self, from: data)
+            let rate = result.rate
+            return rate
+        } catch {
+            print(error.localizedDescription)
+            return nil
         }
     }
 
